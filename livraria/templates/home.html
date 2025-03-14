@@ -1,6 +1,21 @@
 {%extends 'base.html' %}
 
 {%block content%}
-    <h2 class="text-center">Lista de livros</h2>
-    <hr> 
+    <h2 class="text-center">Login</h2>
+    <hr>
+
+    <form method="post" action="{%url 'home'%}">
+        {%csrf_token%}
+        <div class="mb-3 w-25 p-3" style="align-items: center;">
+            <label class="form-label">Usuário</label>
+            <input type="text" name="usuario" class="form-control" required>
+        </div>
+
+        <div class="mb-3 w-25 p-3">
+            <label class="form-label">Senha</label>
+            <input type="password" name="senha" class="form-control" required>
+        </div>
+        <button class="btn btn-primary" type="submit">Login</button>
+    </form> 
+
 {%endblock%}
