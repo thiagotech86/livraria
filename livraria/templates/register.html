@@ -3,4 +3,9 @@
 {%block content%}
     <h2 class="text-center">Cadastro de usuário</h2>
     <hr>
+    <form method="post">
+        {%csrf_token%}
+       {{user_form.as_p}}
+        
+    </form>
 {%endblock%}

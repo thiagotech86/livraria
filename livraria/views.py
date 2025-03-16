@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect # type: ignore
 from django.http import HttpResponse # type: ignore
 from django.contrib.auth import authenticate, login, logout # type: ignore
 from django.contrib import messages # type: ignore # mensagens de erro 
+from django.contrib.auth.forms import UserCreationForm
+from .forms import SignUpForm
 # Retornando uma página html
 def home(request):
     if request.method=="POST": # Se o método request for post, valide login e senha, se não retorne a página home.
@@ -33,4 +35,5 @@ def logout_user(request):
 
 
 def register_user(request):
-    return render(request,"register.html")
+    user_form=SignUpForm()
+    return render(request,"register.html",{'user_form':user_form})
