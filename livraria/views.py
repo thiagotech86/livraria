@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect # type: ignore
 from django.http import HttpResponse # type: ignore
 from django.contrib.auth import authenticate, login, logout # type: ignore
 from django.contrib import messages # type: ignore # mensagens de erro 
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm # type: ignore
 from .forms import SignUpForm
 # Retornando uma página html
 def home(request):
@@ -35,5 +35,22 @@ def logout_user(request):
 
 
 def register_user(request):
-    user_form=SignUpForm()
+    if request.method=='POST': # Se a requisição for do tipo post...
+        user_form=SignUpForm(request.POST)
+        if user_form.is_valid(): # validaçã dos dados inseridos
+            user_form.save()
+            # Autenticação e login
+            username=user_form.cleaned_data['username']
+            password=user_form.cleaned_data['password1']
+            user=authenticate(
+                username=username,
+                password=password
+
+            )
+            login(request, user)
+            messages.success(request,'Login realizado com sucesso')
+            return redirect('home')
+    else:
+        user_form=SignUpForm()
+        return render(request,"register.html",{'user_form':user_form})
     return render(request,"register.html",{'user_form':user_form})
