@@ -4,8 +4,14 @@ from django.contrib.auth import authenticate, login, logout # type: ignore
 from django.contrib import messages # type: ignore # mensagens de erro 
 from django.contrib.auth.forms import UserCreationForm # type: ignore
 from .forms import SignUpForm
+from .models import Book
+
+
 # Retornando uma página html
 def home(request):
+
+    books=Book.objects.all() # listar todos os livros (objetos) cadastrados.
+
     if request.method=="POST": # Se o método request for post, valide login e senha, se não retorne a página home.
         username=request.POST['usuario']
         password=request.POST['senha']
@@ -24,7 +30,7 @@ def home(request):
             return redirect('home')
 
     else:
-        return render(request,'home.html') 
+        return render(request,'home.html',{'books':books}) 
 
 
 def logout_user(request):
