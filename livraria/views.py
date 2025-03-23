@@ -3,7 +3,7 @@ from django.http import HttpResponse # type: ignore
 from django.contrib.auth import authenticate, login, logout # type: ignore
 from django.contrib import messages # type: ignore # mensagens de erro 
 from django.contrib.auth.forms import UserCreationForm # type: ignore
-from .forms import SignUpForm
+from .forms import SignUpForm, AddBookForm
 from .models import Book
 
 
@@ -60,3 +60,49 @@ def register_user(request):
         user_form=SignUpForm()
         return render(request,"register.html",{'user_form':user_form})
     return render(request,"register.html",{'user_form':user_form})
+
+def book_detail(request,id):
+    if request.user.is_authenticated:
+        book=Book.objects.get(id=id) # Buscar objeto pelo id
+        return render (request,'book.html',{'book':book})
+    else:
+        messages.error(request,'Você precisa estar logado')
+        return redirect('home')
+    
+    
+def book_delete(request, id):
+    if request.user.is_authenticated:# Se o usuário estiver autenticado
+        book=Book.objects.get(id=id)# Buscar objeto pelo id
+        book.delete()
+        messages.success(request, 'Livro excluído com sucesso!')
+        return redirect('home')
+    else:
+        messages.error(request,'Você precisa estar logado!')
+        return redirect('home')
+    
+def book_add(request):
+    form = AddBookForm(request.POST or None)
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Livro adicionado com sucesso!')
+                return redirect('home')
+        return render(request, 'add_book.html', {'form':form})
+    else:
+        messages.error(request, 'Você deve estar autenticado para adicionar livro')
+        return redirect('home')
+
+
+def book_update(request, id):
+    if request.user.is_authenticated:
+        book=Book.objects.get(id=id)
+        form=AddBookForm(request.POST or None, instance=book)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Livro atualizado com sucesso!')
+            return redirect('home')
+        return render(request,'update_book.html',{'form':form})
+    else:
+        messages.error(request, 'Você deve estar autenticado para adicionar livro')
+        return redirect('home')
